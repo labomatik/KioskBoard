@@ -1086,3 +1086,7 @@
   return KioskBoard;
   // KioskBoard: end
 });
+
+// ES6 Module Export
+// eslint-disable-next-line
+export default KioskBoard;

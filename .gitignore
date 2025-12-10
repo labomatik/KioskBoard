@@ -12,3 +12,4 @@ node_modules/
 # IDE/Editor
 .vscode/
 .vs/
+.idea/

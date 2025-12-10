@@ -8,7 +8,7 @@
 
 // Dev Dependencies
 const chalk = require('chalk');
-const package = require('../package.json');
+const packageJson = require('../package.json');
 
 // Constants: begin
 // - CleanCSS Options: begin
@@ -62,8 +62,8 @@ module.exports = {
   fileScript: 'kioskboard.js',
   fileStyle: 'kioskboard.css',
   fileScriptAIO: 'kioskboard-aio.js',
-  version: (JSON.stringify((package || {}).version) || '').replace(/"/gm, ''),
-  author: (JSON.stringify((package || {}).author) || '').replace(/"/gm, ''),
+  version: (JSON.stringify((packageJson || {}).version) || '').replace(/"/gm, ''),
+  author: (JSON.stringify((packageJson || {}).author) || '').replace(/"/gm, ''),
   title: 'KioskBoard - Virtual Keyboard',
   url: '(https://github.com/furcan/KioskBoard)',
   license: 'MIT Licence (https://opensource.org/licenses/MIT)',
