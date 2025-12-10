@@ -40,6 +40,167 @@
 
 /* KioskBoard: Main: end */
 
+/* KioskBoard: Preview Field: begin */
+#KioskBoard-VirtualKeyboard .kioskboard-preview {
+  padding: 12px 20px;
+  width: 100%;
+}
+
+#KioskBoard-VirtualKeyboard .kioskboard-preview-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+#KioskBoard-VirtualKeyboard .kioskboard-preview-field {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: white;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  direction: ltr;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+#KioskBoard-VirtualKeyboard .kioskboard-preview-field::-webkit-scrollbar {
+  display: none;
+}
+
+#KioskBoard-VirtualKeyboard .kioskboard-preview-content {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  min-height: 1.2em;
+}
+
+#KioskBoard-VirtualKeyboard .kioskboard-preview-before,
+#KioskBoard-VirtualKeyboard .kioskboard-preview-after {
+  white-space: pre;
+}
+
+#KioskBoard-VirtualKeyboard .kioskboard-preview-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background-color: #333;
+  margin: 0 1px;
+  -webkit-animation: kioskboard-cursor-blink 1s infinite;
+  animation: kioskboard-cursor-blink 1s infinite;
+  flex-shrink: 0;
+}
+
+@-webkit-keyframes kioskboard-cursor-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes kioskboard-cursor-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+#KioskBoard-VirtualKeyboard.kioskboard-theme-dark .kioskboard-preview {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+#KioskBoard-VirtualKeyboard.kioskboard-theme-dark .kioskboard-preview-label {
+  color: #aaa;
+}
+
+#KioskBoard-VirtualKeyboard.kioskboard-theme-dark .kioskboard-preview-field {
+  background: #333;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+#KioskBoard-VirtualKeyboard.kioskboard-theme-dark .kioskboard-preview-cursor {
+  background-color: #fff;
+}
+
+#KioskBoard-VirtualKeyboard.kioskboard-theme-flat .kioskboard-preview-field {
+  border-radius: 0;
+}
+
+#KioskBoard-VirtualKeyboard.kioskboard-theme-material .kioskboard-preview-field {
+  border-radius: 2px;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+#KioskBoard-VirtualKeyboard.kioskboard-theme-oldschool .kioskboard-preview-field {
+  border-radius: 6px;
+  border-width: 2px;
+}
+
+/* KioskBoard: Preview Field: end */
+
+/* KioskBoard: Custom Numpad: begin */
+#KioskBoard-VirtualKeyboard .kioskboard-row-numpad-custom {
+  max-width: 400px;
+}
+
+#KioskBoard-VirtualKeyboard .kioskboard-row-numpad-custom span[class^="kioskboard-key"] {
+  width: calc(25% - 16px);
+}
+
+@media only screen and (max-width: 767px) {
+  #KioskBoard-VirtualKeyboard .kioskboard-row-numpad-custom {
+    max-width: 100%;
+  }
+
+  #KioskBoard-VirtualKeyboard .kioskboard-row-numpad-custom span[class^="kioskboard-key"] {
+    width: calc(25% - 8px);
+    margin: 4px 4px 12px;
+    font-size: 16px !important;
+    min-height: 55px;
+  }
+}
+
+/* KioskBoard: Custom Numpad: end */
+
 /* KioskBoard: Wrapper: begin */
 #KioskBoard-VirtualKeyboard .kioskboard-wrapper {
   position: relative;
@@ -701,8 +862,8 @@
 
 #KioskBoard-VirtualKeyboard.kioskboard-with-animation.kioskboard-placement-bottom.kioskboard-slide {
   bottom: 0;
-  -webkit-animation: kioskboard-animation-slide-bottom 1.2s ease-in-out 0s normal;
-  animation: kioskboard-animation-slide-bottom 1.2s ease-in-out 0s normal;
+  -webkit-animation: kioskboard-animation-slide-bottom 0.36s ease-in-out 0s normal;
+  animation: kioskboard-animation-slide-bottom 0.36s ease-in-out 0s normal;
 }
 
 @-webkit-keyframes kioskboard-animation-slide-bottom {
@@ -727,8 +888,8 @@
 
 #KioskBoard-VirtualKeyboard.kioskboard-with-animation.kioskboard-slide.kioskboard-placement-bottom.kioskboard-slide-remove {
   bottom: -100%;
-  -webkit-animation: kioskboard-animation-slide-bottom-remove 1.2s ease-in-out 0s normal;
-  animation: kioskboard-animation-slide-bottom-remove 1.2s ease-in-out 0s normal;
+  -webkit-animation: kioskboard-animation-slide-bottom-remove 0.36s ease-in-out 0s normal;
+  animation: kioskboard-animation-slide-bottom-remove 0.36s ease-in-out 0s normal;
 }
 
 @-webkit-keyframes kioskboard-animation-slide-bottom-remove {
@@ -753,8 +914,8 @@
 
 #KioskBoard-VirtualKeyboard.kioskboard-with-animation.kioskboard-placement-top.kioskboard-slide {
   top: 0;
-  -webkit-animation: kioskboard-animation-slide-top 1.2s ease-in-out 0s normal;
-  animation: kioskboard-animation-slide-top 1.2s ease-in-out 0s normal;
+  -webkit-animation: kioskboard-animation-slide-top 0.36s ease-in-out 0s normal;
+  animation: kioskboard-animation-slide-top 0.36s ease-in-out 0s normal;
 }
 
 @-webkit-keyframes kioskboard-animation-slide-top {
@@ -779,8 +940,8 @@
 
 #KioskBoard-VirtualKeyboard.kioskboard-with-animation.kioskboard-slide.kioskboard-placement-top.kioskboard-slide-remove {
   top: -100%;
-  -webkit-animation: kioskboard-animation-slide-top-remove 1.2s ease-in-out 0s normal;
-  animation: kioskboard-animation-slide-top-remove 1.2s ease-in-out 0s normal;
+  -webkit-animation: kioskboard-animation-slide-top-remove 0.36s ease-in-out 0s normal;
+  animation: kioskboard-animation-slide-top-remove 0.36s ease-in-out 0s normal;
 }
 
 @-webkit-keyframes kioskboard-animation-slide-top-remove {

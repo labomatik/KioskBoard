@@ -16,8 +16,43 @@
 [![TypeScript][typescript-badge]][typescript-url]
 [![License][lic-badge]][lic-url]
 
-# KioskBoard - Virtual Keyboard
+# KioskBoard - Virtual Keyboard (Fork)
 A pure JavaScript library for using virtual keyboards.
+
+> **Note:** This is a fork with additional features for kiosk applications. See [DOCUMENTATION.md](DOCUMENTATION.md) for details.
+
+---------
+
+## Fork Features
+
+This fork adds the following features:
+
+### 1. Customizable Numpad
+Support for custom characters in numpad (not just numbers):
+```javascript
+keysNumpadArrayOfNumbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, '+', 0, '⌫']
+```
+
+### 2. Preview Field
+A preview field with label and blinking cursor:
+```javascript
+showPreviewField: true,
+previewFieldLabel: 'PIN Code',  // Label above the field (default: "Aperçu")
+```
+
+### 3. Custom Events
+Events emitted during typing:
+- `kioskboard:keypress` - Key pressed
+- `kioskboard:backspace` - Backspace pressed
+- `kioskboard:enter` - Enter pressed
+- `kioskboard:open` - Keyboard opened
+- `kioskboard:close` - Keyboard closed
+
+```javascript
+input.addEventListener('kioskboard:close', (e) => {
+  console.log('Final value:', e.detail.value);
+});
+```
 
 ---------
 
@@ -206,6 +241,15 @@ KioskBoard.init({
 
   // The Enter key can close and remove the keyboard. Prevented when "false"
   keysEnterCanClose: true,
+
+  // [FORK] Show a preview field above the keyboard with blinking cursor
+  showPreviewField: false,
+
+  // [FORK] Label displayed above the preview field
+  previewFieldLabel: 'Aperçu',
+
+  // [FORK] Emit custom events (kioskboard:keypress, kioskboard:backspace, kioskboard:enter, kioskboard:open, kioskboard:close)
+  emitCustomEvents: true,
 });
 ```
 

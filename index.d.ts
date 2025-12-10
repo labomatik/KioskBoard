@@ -48,12 +48,15 @@ declare namespace KioskBoard {
     keysSpecialCharsArrayOfStrings?: string[];
 
     /**
-     * @property {Array<number>} - Optional, An Array of Numbers can be set to override the built-in numpad keys. (From 0 to 9, in any order.)
+     * @property {Array<number|string>} - Optional, An Array of Numbers or Strings can be set to override the built-in numpad keys.
      * @defaultValue `null`
      *
      * e.g. [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+     * e.g. [1, 2, 3, 4, 5, 6, 7, 8, 9, '+', 0, '⌫'] - Custom layout with special characters
+     *
+     * Special values: '⌫' or 'backspace' for backspace key, '↵' or 'enter' for enter key
      */
-    keysNumpadArrayOfNumbers?: number[];
+    keysNumpadArrayOfNumbers?: (number | string)[];
 
     /**
      * @property {string} - Optional, Language Code `(ISO 639-1)` for custom keys (for language support).
@@ -166,6 +169,69 @@ declare namespace KioskBoard {
      * @defaultValue `true`
      */
     keysEnterCanClose?: boolean;
+
+    /**
+     * @property {boolean} - Optional, Show a preview field above the keyboard displaying what is being typed.
+     * @defaultValue `false`
+     */
+    showPreviewField?: boolean;
+
+    /**
+     * @property {string} - Optional, Label text displayed above the preview field.
+     * @defaultValue `"Aperçu"`
+     */
+    previewFieldLabel?: string;
+
+    /**
+     * @property {boolean} - Optional, Enable or disable custom event emission (kioskboard:keypress, kioskboard:backspace, kioskboard:enter, kioskboard:open, kioskboard:close).
+     * @defaultValue `true`
+     */
+    emitCustomEvents?: boolean;
+  }
+
+  /**
+   * @interface IKioskBoardKeypressEventDetail
+   * @memberof KioskBoard
+   */
+  export interface IKioskBoardKeypressEventDetail {
+    key: string;
+    value: string;
+    cursorPosition: number;
+  }
+
+  /**
+   * @interface IKioskBoardBackspaceEventDetail
+   * @memberof KioskBoard
+   */
+  export interface IKioskBoardBackspaceEventDetail {
+    deletedChar: string;
+    value: string;
+    cursorPosition: number;
+  }
+
+  /**
+   * @interface IKioskBoardEnterEventDetail
+   * @memberof KioskBoard
+   */
+  export interface IKioskBoardEnterEventDetail {
+    value: string;
+  }
+
+  /**
+   * @interface IKioskBoardOpenEventDetail
+   * @memberof KioskBoard
+   */
+  export interface IKioskBoardOpenEventDetail {
+    input: HTMLInputElement | HTMLTextAreaElement;
+  }
+
+  /**
+   * @interface IKioskBoardCloseEventDetail
+   * @memberof KioskBoard
+   */
+  export interface IKioskBoardCloseEventDetail {
+    input: HTMLInputElement | HTMLTextAreaElement;
+    value: string;
   }
 
   /**

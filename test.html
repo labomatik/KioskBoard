@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KioskBoard Fork - Test</title>
+  <link rel="stylesheet" href="dist/kioskboard-2.3.0.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+    }
+    h2 {
+      color: #666;
+      margin-top: 40px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    input, textarea {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+    label {
+      font-weight: bold;
+      color: #555;
+    }
+    .event-log {
+      background: #1e1e1e;
+      color: #0f0;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    .event-log div {
+      margin: 3px 0;
+    }
+    .clear-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .info {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 10px 15px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>KioskBoard Fork - Test des nouvelles fonctionnalites</h1>
+
+  <!-- Test 1: Numpad par defaut -->
+  <h2>1. Numpad par defaut (avec + et -)</h2>
+  <div class="test-section">
+    <div class="info">
+      Le numpad par defaut inclut maintenant <code>+</code> et <code>-</code> automatiquement.
+    </div>
+    <label>Cliquez pour ouvrir le numpad:</label>
+    <input
+      type="text"
+      id="input-numpad-custom"
+      class="js-numpad-custom"
+      data-kioskboard-type="numpad"
+      placeholder="Tapez un numero de telephone (+33...)"
+    >
+  </div>
+
+  <!-- Test 2: Preview Field -->
+  <h2>2. Preview Field</h2>
+  <div class="test-section">
+    <div class="info">
+      Le champ de preview s'affiche en haut du clavier et montre ce que vous tapez en temps reel.
+      Le label peut etre defini via <code>data-kioskboard-preview-label</code>.
+    </div>
+    <label>Numpad avec preview field (label via data attribute):</label>
+    <input
+      type="text"
+      id="input-preview"
+      class="js-numpad-preview"
+      data-kioskboard-type="numpad"
+      data-kioskboard-preview-label="Code PIN"
+      placeholder="Le preview field apparait dans le clavier"
+    >
+  </div>
+
+  <!-- Test 3: Evenements -->
+  <h2>3. Evenements personnalises</h2>
+  <div class="test-section">
+    <div class="info">
+      Tous les evenements sont loggues ci-dessous: <code>keypress</code>, <code>backspace</code>, <code>enter</code>, <code>open</code>, <code>close</code>
+    </div>
+    <label>Tapez et observez les evenements:</label>
+    <input
+      type="text"
+      id="input-events"
+      class="js-numpad-events"
+      data-kioskboard-type="numpad"
+      placeholder="Ouvrez le clavier et tapez..."
+    >
+    <div class="event-log" id="event-log">
+      <div>-- En attente d'evenements --</div>
+    </div>
+    <button class="clear-btn" onclick="clearLog()">Effacer le log</button>
+  </div>
+
+  <!-- Test 4: Clavier complet -->
+  <h2>4. Clavier complet avec preview</h2>
+  <div class="test-section">
+    <div class="info">
+      Clavier AZERTY complet avec preview field et caracteres speciaux.
+    </div>
+    <label>Clavier complet:</label>
+    <input
+      type="text"
+      id="input-full"
+      class="js-keyboard-full"
+      data-kioskboard-type="all"
+      data-kioskboard-specialcharacters="true"
+      placeholder="Clavier complet avec preview"
+    >
+  </div>
+
+  <!-- Test 5: Theme dark -->
+  <h2>5. Theme Dark</h2>
+  <div class="test-section">
+    <div class="info">
+      Test du preview field avec le theme sombre.
+    </div>
+    <label>Numpad theme dark:</label>
+    <input
+      type="text"
+      id="input-dark"
+      class="js-numpad-dark"
+      data-kioskboard-type="numpad"
+      placeholder="Theme sombre avec preview"
+    >
+  </div>
+
+  <script src="dist/kioskboard-2.3.0.min.js"></script>
+  <script>
+    // 1. Numpad par defaut (+ et - inclus)
+    KioskBoard.run('.js-numpad-custom', {
+      keysJsonUrl: 'dist/kioskboard-keys-french.json',
+      theme: 'light',
+      keysEnterText: 'OK',
+    });
+
+    // 2. Numpad avec preview (label via data attribute)
+    KioskBoard.run('.js-numpad-preview', {
+      keysJsonUrl: 'dist/kioskboard-keys-french.json',
+      theme: 'material',
+      showPreviewField: true,
+      keysEnterText: 'Valider',
+    });
+
+    // 3. Numpad avec evenements
+    KioskBoard.run('.js-numpad-events', {
+      keysJsonUrl: 'dist/kioskboard-keys-french.json',
+      theme: 'flat',
+      showPreviewField: true,
+      previewFieldLabel: 'Saisie',
+      keysEnterText: 'Envoyer',
+    });
+
+    // Ecouter les evenements
+    const inputEvents = document.getElementById('input-events');
+    const eventLog = document.getElementById('event-log');
+
+    function logEvent(name, detail) {
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.innerHTML = `<span style="color:#888">[${time}]</span> <span style="color:#ff0">${name}</span>: ${JSON.stringify(detail)}`;
+      eventLog.insertBefore(div, eventLog.firstChild);
+    }
+
+    inputEvents.addEventListener('kioskboard:open', (e) => {
+      logEvent('open', { input: e.detail.input.id });
+    });
+
+    inputEvents.addEventListener('kioskboard:keypress', (e) => {
+      logEvent('keypress', e.detail);
+    });
+
+    inputEvents.addEventListener('kioskboard:backspace', (e) => {
+      logEvent('backspace', e.detail);
+    });
+
+    inputEvents.addEventListener('kioskboard:enter', (e) => {
+      logEvent('enter', e.detail);
+    });
+
+    inputEvents.addEventListener('kioskboard:close', (e) => {
+      logEvent('close', { value: e.detail.value });
+    });
+
+    function clearLog() {
+      eventLog.innerHTML = '<div>-- Log efface --</div>';
+    }
+
+    // 4. Clavier complet
+    KioskBoard.run('.js-keyboard-full', {
+      keysJsonUrl: 'dist/kioskboard-keys-french.json',
+      theme: 'oldschool',
+      showPreviewField: true,
+      previewFieldLabel: 'Apercu',
+      keysEnterText: 'Entrer',
+      language: 'fr',
+    });
+
+    // 5. Theme dark
+    KioskBoard.run('.js-numpad-dark', {
+      keysJsonUrl: 'dist/kioskboard-keys-french.json',
+      theme: 'dark',
+      showPreviewField: true,
+      previewFieldLabel: 'Code',
+      keysEnterText: 'OK',
+    });
+  </script>
+
+</body>
+</html>

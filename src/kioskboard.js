@@ -68,6 +68,10 @@
     keysEnterText: 'Enter',
     keysEnterCallback: undefined,
     keysEnterCanClose: true,
+    // Custom fork options
+    showPreviewField: false,
+    previewFieldLabel: 'Aperçu',
+    emitCustomEvents: true,
   };
   var kioskBoardCachedKeys;
   var kioskBoardNewOptions;
@@ -111,16 +115,18 @@
     '35': '`',
   };
   var kioskBoardNumpadKeysObject = {
-    '0': '7',
-    '1': '8',
-    '2': '9',
+    '0': '1',
+    '1': '2',
+    '2': '3',
     '3': '4',
     '4': '5',
     '5': '6',
-    '6': '1',
-    '7': '2',
-    '8': '3',
-    '9': '0',
+    '6': '7',
+    '7': '8',
+    '8': '9',
+    '9': '+',
+    '10': '0',
+    '11': '-',
   };
   var kioskBoardAllKeysNumbersObject = {
     '0': '1',
@@ -442,7 +448,8 @@
           if (keyboardType === kioskBoardTypes.Numpad) {
             // check "keysNumpadArrayOfNumbers" for override: begin
             var numpadKeys = opt.keysNumpadArrayOfNumbers;
-            if (Array.isArray(numpadKeys) && numpadKeys.length === 10) {
+            var useCustomNumpad = Array.isArray(numpadKeys) && numpadKeys.length > 0;
+            if (useCustomNumpad) {
               kioskBoardNumpadKeysObject = numpadKeys.reduce(function (numpadMemo, numpadKey, numpadIndex) {
                 numpadMemo[numpadIndex] = numpadKey;
                 return numpadMemo;
@@ -451,15 +458,31 @@
             // check "keysNumpadArrayOfNumbers" for override: end
 
             var numpadKeysContent = '';
+            var numpadKeysCount = Object.keys(kioskBoardNumpadKeysObject).length;
+            var numpadLastIndex = (numpadKeysCount - 1).toString();
             for (var key3 in kioskBoardNumpadKeysObject) {
               if (Object.prototype.hasOwnProperty.call(kioskBoardNumpadKeysObject, key3)) {
                 var index3 = key3;
                 var value3 = kioskBoardNumpadKeysObject[key3];
-                var eachKey3 = '<span style="font-family:' + fontFamily + ',sans-serif;font-weight:' + fontWeight + ';font-size:' + fontSize + ';" class="kioskboard-key kioskboard-key-' + value3.toString() + ' ' + (index3 === '9' ? 'kioskboard-key-last' : '') + '" data-index="' + index3.toString() + '" data-value="' + value3.toString() + '">' + value3.toString() + '</span>';
-                numpadKeysContent += eachKey3;
+                var isBackspaceKey = value3 === '⌫' || value3 === 'backspace';
+                var isEnterKey = value3 === '↵' || value3 === 'enter';
+                var isLastKey = index3 === numpadLastIndex;
+
+                if (isBackspaceKey) {
+                  numpadKeysContent += backspaceKey;
+                } else if (isEnterKey) {
+                  numpadKeysContent += enterKey;
+                } else {
+                  var eachKey3 = '<span style="font-family:' + fontFamily + ',sans-serif;font-weight:' + fontWeight + ';font-size:' + fontSize + ';" class="kioskboard-key kioskboard-key-' + value3.toString() + ' ' + (isLastKey ? 'kioskboard-key-last' : '') + '" data-index="' + index3.toString() + '" data-value="' + value3.toString() + '">' + value3.toString() + '</span>';
+                  numpadKeysContent += eachKey3;
+                }
               }
             }
-            keysRowElements += '<div class="kioskboard-row kioskboard-row-numpad">' + numpadKeysContent + backspaceKey + enterKey + '</div>';
+            // Only add backspace and enter if not already in custom keys
+            var hasBackspace = useCustomNumpad && numpadKeys.some(function(k) { return k === '⌫' || k === 'backspace'; });
+            var hasEnter = useCustomNumpad && numpadKeys.some(function(k) { return k === '↵' || k === 'enter'; });
+            var additionalKeys = (!hasBackspace ? backspaceKey : '') + (!hasEnter ? enterKey : '');
+            keysRowElements += '<div class="kioskboard-row kioskboard-row-numpad' + (useCustomNumpad ? ' kioskboard-row-numpad-custom' : '') + '">' + numpadKeysContent + additionalKeys + '</div>';
           }
           // keyboard type is "numpad": end
 
@@ -510,6 +533,29 @@
           }
           // keyboard type is "all" or "keyboard": end
 
+          // create preview field: begin
+          var previewFieldElement = '';
+          var showPreviewField = opt.showPreviewField === true;
+          var previewFieldLabelData = theInput.dataset.kioskboardPreviewLabel || '';
+          var previewFieldLabel = previewFieldLabelData || (typeof opt.previewFieldLabel === 'string' ? opt.previewFieldLabel : 'Aperçu');
+          if (showPreviewField) {
+            var initialValue = theInput.value || '';
+            var initialCursorPos = theInputSelIndex || initialValue.length;
+            var beforeCursor = initialValue.substring(0, initialCursorPos);
+            var afterCursor = initialValue.substring(initialCursorPos);
+            previewFieldElement = '<div class="kioskboard-preview">' +
+              '<label class="kioskboard-preview-label">' + previewFieldLabel + '</label>' +
+              '<div class="kioskboard-preview-field">' +
+                '<span class="kioskboard-preview-content">' +
+                  '<span class="kioskboard-preview-before">' + beforeCursor + '</span>' +
+                  '<span class="kioskboard-preview-cursor"></span>' +
+                  '<span class="kioskboard-preview-after">' + afterCursor + '</span>' +
+                '</span>' +
+              '</div>' +
+            '</div>';
+          }
+          // create preview field: end
+
           // create keys wrapper: begin
           var wrapKeysElement = function (stringHtml) {
             var div = window.document.createElement('div');
@@ -517,7 +563,7 @@
             div.innerHTML = stringHtml.trim();
             return div;
           };
-          var allKeysElement = wrapKeysElement(keysRowElements); // all keyboard element
+          var allKeysElement = wrapKeysElement(previewFieldElement + keysRowElements); // all keyboard element with preview field
           // create keys wrapper: end
 
           // check "cssAnimations": begin
@@ -613,6 +659,52 @@
           };
           // keys event listeners: end
 
+          // helper: update preview field: begin
+          var updatePreviewField = function (value, cursorPos) {
+            if (showPreviewField) {
+              var previewField = window.document.querySelector('.kioskboard-preview-field');
+              var beforeSpan = window.document.querySelector('.kioskboard-preview-before');
+              var afterSpan = window.document.querySelector('.kioskboard-preview-after');
+              var cursorSpan = window.document.querySelector('.kioskboard-preview-cursor');
+              if (beforeSpan && afterSpan && previewField) {
+                var pos = typeof cursorPos === 'number' ? cursorPos : value.length;
+                beforeSpan.textContent = value.substring(0, pos);
+                afterSpan.textContent = value.substring(pos);
+                // Scroll to keep cursor visible
+                if (cursorSpan) {
+                  var scrollTimeout = setTimeout(function () {
+                    var cursorLeft = cursorSpan.offsetLeft;
+                    var fieldWidth = previewField.clientWidth;
+                    var scrollLeft = previewField.scrollLeft;
+                    // If cursor is out of view on the right
+                    if (cursorLeft > scrollLeft + fieldWidth - 20) {
+                      previewField.scrollLeft = cursorLeft - fieldWidth + 40;
+                    }
+                    // If cursor is out of view on the left
+                    else if (cursorLeft < scrollLeft + 20) {
+                      previewField.scrollLeft = cursorLeft - 40;
+                    }
+                    clearTimeout(scrollTimeout);
+                  }, 10);
+                }
+              }
+            }
+          };
+          // helper: update preview field: end
+
+          // helper: emit custom event: begin
+          var emitCustomEvent = function (eventName, detail) {
+            if (opt.emitCustomEvents === true) {
+              var customEvent = new CustomEvent(eventName, {
+                bubbles: true,
+                cancelable: true,
+                detail: detail,
+              });
+              theInput.dispatchEvent(customEvent);
+            }
+          };
+          // helper: emit custom event: end
+
           // keys click listeners: begin
           var keysClickListeners = function (input) {
             // each key click listener: begin
@@ -661,6 +753,16 @@
 
                     // input trigger change event for update the value
                     input.dispatchEvent(changeEvent);
+
+                    // update preview field with cursor position
+                    updatePreviewField(input.value, theInputSelIndex + 1);
+
+                    // emit custom keypress event
+                    emitCustomEvent('kioskboard:keypress', {
+                      key: keyValArr[keyValIndex],
+                      value: input.value,
+                      cursorPosition: theInputSelIndex + 1,
+                    });
                   }
                 });
               }
@@ -702,6 +804,9 @@
                 // input trigger focus
                 input.focus();
 
+                // get deleted char before removing
+                var deletedChar = theInputValArray[theInputSelIndex - 1] || '';
+
                 // remove value by index
                 theInputValArray.splice((theInputSelIndex - 1), 1);
 
@@ -715,6 +820,16 @@
 
                 // input trigger change event for update the value
                 input.dispatchEvent(changeEvent);
+
+                // update preview field with cursor position
+                updatePreviewField(input.value, theInputSelIndex - 1);
+
+                // emit custom backspace event
+                emitCustomEvent('kioskboard:backspace', {
+                  deletedChar: deletedChar,
+                  value: input.value,
+                  cursorPosition: theInputSelIndex - 1,
+                });
               });
             }
             // backspace key click listener: end
@@ -752,7 +867,17 @@
             var enterKeyElm = window.document.querySelector('.kioskboard-key-enter');
             if (enterKeyElm) {
               keysEventListeners(enterKeyElm, function () {
+                // emit custom enter event
+                emitCustomEvent('kioskboard:enter', {
+                  value: input.value,
+                });
+
                 if (opt.keysEnterCanClose === true) {
+                  // emit custom close event before closing
+                  emitCustomEvent('kioskboard:close', {
+                    input: input,
+                    value: input.value,
+                  });
                   removeKeyboard();
                 }
                 if (typeof opt.keysEnterCallback === 'function') {
@@ -839,6 +964,11 @@
             // keyboard keys click listeners
             keysClickListeners(theInput);
 
+            // emit custom open event
+            emitCustomEvent('kioskboard:open', {
+              input: theInput,
+            });
+
             // keyboard click outside listener: begin
             var docClickListener = function (e) {
               var docClickTimeout = setTimeout(function () {
@@ -850,6 +980,11 @@
                   && !kioskBoardEventTargetIsElementOrChilds(e, keyboardElm)
                   && !e.target.classList.contains('kioskboard-body-padding')
                 ) {
+                  // emit custom close event before closing
+                  emitCustomEvent('kioskboard:close', {
+                    input: theInput,
+                    value: theInput.value,
+                  });
                   removeKeyboard();
                   window.document.removeEventListener('click', docClickListener);
                 }
