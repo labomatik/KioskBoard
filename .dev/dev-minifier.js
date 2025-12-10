@@ -22,7 +22,7 @@ const minifiedCodeBySourceType = (text, type) => {
   // if script
   if (type === 'script') {
     // Check if text has ES6 export and preserve it
-    const hasExport = text.includes('export default KioskBoard;');
+    const hasExport = text.includes('export default');
     // Remove export temporarily for minification (babel-minify strips it)
     let textToMinify = text;
     if (hasExport) {
@@ -36,7 +36,7 @@ const minifiedCodeBySourceType = (text, type) => {
       // Re-add ES6 export at the end
       let finalCode = script.code;
       if (hasExport) {
-        finalCode += '\nexport default KioskBoard;';
+        finalCode += "\nexport default (typeof window !== 'undefined' ? window.KioskBoard : null);";
       }
       return {
         code: finalCode,

@@ -1089,4 +1089,4 @@
 
 // ES6 Module Export
 // eslint-disable-next-line
-export default KioskBoard;
+export default (typeof window !== 'undefined' ? window.KioskBoard : null);
