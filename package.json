@@ -1,11 +1,11 @@
 {
   "name": "kioskboard",
   "main": "dist/kioskboard-aio-2.3.0.min.js",
-  "module": "src/kioskboard.js",
+  "module": "src/index.js",
   "types": "index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/kioskboard.js",
+      "import": "./src/index.js",
       "require": "./dist/kioskboard-aio-2.3.0.min.js"
     },
     "./dist/*": "./dist/*"

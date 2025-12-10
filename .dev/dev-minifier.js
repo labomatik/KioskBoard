@@ -21,25 +21,10 @@ const thisFilePath = '.dev/dev-minifier.js';
 const minifiedCodeBySourceType = (text, type) => {
   // if script
   if (type === 'script') {
-    // Check if text has ES6 export and preserve it
-    const hasExport = text.includes('export default');
-    // Remove export temporarily for minification (babel-minify strips it)
-    let textToMinify = text;
-    if (hasExport) {
-      // Remove ES6 export section (including eslint comment) for minification
-      textToMinify = text.replace(/\n*\/\/\s*ES6 Module Export[\s\S]*$/, '');
-    }
-    // Add sourceType: 'module' to support ES6 syntax
-    const babelOptions = { sourceType: 'module' };
-    const script = Minify(textToMinify, Constants.minifyOptions, { ...Constants.minifyOverrides, ...babelOptions });
+    const script = Minify(text, Constants.minifyOptions, Constants.minifyOverrides);
     if (typeof script === 'object' && typeof script.code === 'string' && typeof script.sourceType === 'string') {
-      // Re-add ES6 export at the end
-      let finalCode = script.code;
-      if (hasExport) {
-        finalCode += "\nexport default (typeof window !== 'undefined' ? window.KioskBoard : null);";
-      }
       return {
-        code: finalCode,
+        code: script.code,
         type: script.sourceType,
       };
     } else {

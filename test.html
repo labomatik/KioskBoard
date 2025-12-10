@@ -171,8 +171,10 @@
     >
   </div>
 
-  <script src="dist/kioskboard-2.3.0.min.js"></script>
-  <script>
+  <script type="module">
+    // Import ES6
+    import KioskBoard from './src/index.js';
+
     // 1. Numpad par defaut (+ et - inclus)
     KioskBoard.run('.js-numpad-custom', {
       keysJsonUrl: 'dist/kioskboard-keys-french.json',
@@ -228,9 +230,10 @@
       logEvent('close', { value: e.detail.value });
     });
 
-    function clearLog() {
+    // Expose clearLog globally for onclick
+    window.clearLog = function() {
       eventLog.innerHTML = '<div>-- Log efface --</div>';
-    }
+    };
 
     // 4. Clavier complet
     KioskBoard.run('.js-keyboard-full', {
