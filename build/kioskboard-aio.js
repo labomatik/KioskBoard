@@ -879,6 +879,11 @@
                     input: input,
                     value: input.value,
                   });
+                  // Remove the document click listener before closing
+                  if (window._kioskBoardDocClickListener) {
+                    window.document.removeEventListener('click', window._kioskBoardDocClickListener);
+                    window._kioskBoardDocClickListener = null;
+                  }
                   removeKeyboard();
                 }
                 if (typeof opt.keysEnterCallback === 'function') {
@@ -1005,6 +1010,7 @@
                 clearTimeout(docClickTimeout);
               }, cssAnimationsDuration);
             };
+            window._kioskBoardDocClickListener = docClickListener; // store reference for cleanup
             window.document.addEventListener('click', docClickListener); // add document click listener
             // keyboard click outside listener: end
           }
